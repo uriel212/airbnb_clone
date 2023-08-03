@@ -4,21 +4,31 @@ import Avatar from "../Avatar";
 import { useCallback, useState } from "react";
 import MenuItem from "./MenuItem";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { signOut } from "next-auth/react";
+import { SafeUser } from "@/app/types";
 
-const UserMenu = () => {
+interface UserMenuProps {
+    currentUser?: SafeUser | null;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({
+    currentUser
+}) => {
     const registerModel = useRegisterModal()
+    const loginModel = useLoginModal()
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleOpen = useCallback(() => {
         setIsOpen((value) => !value);
     }, [])
 
-  return (
-    <div className="relative">
-        <div className="flex flex-row items-center gap-3">
-            <div
-                onClick={() => {}}
-                className="
+    return (
+        <div className="relative">
+            <div className="flex flex-row items-center gap-3">
+                <div
+                    onClick={() => { }}
+                    className="
                     hidden
                     md:block
                     text-sm
@@ -30,12 +40,12 @@ const UserMenu = () => {
                     transition
                     cursor-pointer
                 "
-            >
-                Airbnb your home
-            </div>
-            <div
-                onClick={toggleOpen}
-                className="
+                >
+                    Airbnb your home
+                </div>
+                <div
+                    onClick={toggleOpen}
+                    className="
                     p-4
                     md:py-1
                     md:px-2
@@ -50,17 +60,17 @@ const UserMenu = () => {
                     hover:shadow-md
                     transition
                 "
-            >
-                <AiOutlineMenu/>
-                <div className="hidden md:block">
-                    <Avatar/>
+                >
+                    <AiOutlineMenu />
+                    <div className="hidden md:block">
+                        <Avatar src={currentUser?.image} />
+                    </div>
                 </div>
             </div>
-        </div>
-        {
-            isOpen && (
-                <div 
-                    className="
+            {
+                isOpen && (
+                    <div
+                        className="
                         absolute
                         rounded-xl
                         shadow-md
@@ -72,23 +82,54 @@ const UserMenu = () => {
                         top-12
                         text-sm
                     "
-                >
-                    <div className="flex flex-col cursor-pointer">
-                        <>
-                            <MenuItem
-                                onClick={() => {}}
-                                label="Login"
-                            />
-                            <MenuItem
-                                onClick={registerModel.onOpen}
-                                label="Sign up"
-                            />
-                        </>
+                    >
+                        <div className="flex flex-col cursor-pointer">
+                            {currentUser ? (
+                                <>
+                                    <MenuItem
+                                        onClick={() => { }}
+                                        label="My trips"
+                                    />
+                                    <MenuItem
+                                        onClick={() => { }}
+                                        label="My favorites"
+                                    />
+                                    <MenuItem
+                                        onClick={() => { }}
+                                        label="My reservations"
+                                    />
+                                    <MenuItem
+                                        onClick={() => { }}
+                                        label="My properties"
+                                    />
+                                    <MenuItem
+                                        onClick={() => { }}
+                                        label="Airbnb my home"
+                                    />
+                                    <hr />
+                                    <MenuItem
+                                        onClick={() => signOut()}
+                                        label="Logout"
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <MenuItem
+                                        onClick={loginModel.onOpen}
+                                        label="Login"
+                                    />
+                                    <MenuItem
+                                        onClick={registerModel.onOpen}
+                                        label="Sign up"
+                                    />
+                                </>
+                            )}
+
+                        </div>
                     </div>
-                </div>
-        )}
-    </div>
-  )
+                )}
+        </div>
+    )
 }
 
 export default UserMenu;
